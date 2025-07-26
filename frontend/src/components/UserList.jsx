@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 function UserList({ users }) {
   const [userStats, setUserStats] = useState({})
@@ -56,7 +56,6 @@ function UserList({ users }) {
       })
 
       if (response.ok) {
-        const result = await response.json()
         alert('User added successfully!')
         setNewUser({ name: '', email: '' })
         setShowAddForm(false)

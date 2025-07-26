@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 
@@ -33,12 +33,6 @@ function App() {
 
   const handleCoinAdded = (newCoin) => {
     setCoins(prev => [newCoin, ...prev])
-  }
-
-  const handleCoinUpdated = (updatedCoin) => {
-    setCoins(prev => prev.map(coin => 
-      coin.id === updatedCoin.id ? updatedCoin : coin
-    ))
   }
 
   const handleCoinDeleted = (coinId) => {
@@ -93,8 +87,7 @@ function App() {
               <Route path="/coins" element={
                 <CoinList 
                   coins={coins} 
-                  onCoinUpdated={handleCoinUpdated}
-                  onCoinDeleted={handleCoinDeleted}
+              onCoinDeleted={handleCoinDeleted}
                 />
               } />
               <Route path="/add-coin" element={

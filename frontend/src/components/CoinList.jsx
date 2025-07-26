@@ -1,12 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-const COIN_CONDITIONS = [
-  'POOR', 'FAIR', 'GOOD', 'VERY_GOOD', 'FINE',
-  'VERY_FINE', 'EXTREMELY_FINE', 'ALMOST_UNCIRCULATED',
-  'MINT_STATE', 'PROOF'
-]
-
-function CoinList({ coins, onCoinUpdated, onCoinDeleted }) {
+function CoinList({ coins, onCoinDeleted }) {
   const [filter, setFilter] = useState('')
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('desc')
