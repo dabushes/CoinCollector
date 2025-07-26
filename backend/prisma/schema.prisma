@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CoinType {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // e.g., "Lincoln Cent", "Mercury Dime"
+  denomination String  // e.g., "Cent", "Nickel", "Dime", "Quarter", "Half Dollar", "Dollar"
+  series      String?  // e.g., "Lincoln", "Jefferson", "Roosevelt"
+  startYear   Int?
+  endYear     Int?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  coins       Coin[]
+  
+  @@map("coin_types")
+}
+
+model Mint {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // e.g., "Philadelphia", "Denver", "San Francisco"
+  mintMark  String   @unique // e.g., "", "D", "S", "P"
+  location  String?  // e.g., "Philadelphia, PA"
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  coins     Coin[]
+  
+  @@map("mints")
+}
+
+model Coin {
+  id          Int      @id @default(autoincrement())
+  year        Int
+  mintId      Int
+  typeId      Int
+  condition   String   @default("Good") // e.g., "Poor", "Fair", "Good", "Very Good", "Fine", "Very Fine", "Extremely Fine", "About Uncirculated", "Uncirculated"
+  value       Decimal? @db.Decimal(10, 2)
+  notes       String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  mint        Mint     @relation(fields: [mintId], references: [id])
+  type        CoinType @relation(fields: [typeId], references: [id])
+  collections UserCollection[]
+  
+  @@unique([year, mintId, typeId], name: "unique_coin")
+  @@map("coins")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  collections UserCollection[]
+  
+  @@map("users")
+}
+
+model UserCollection {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  coinId      Int
+  quantity    Int      @default(1)
+  condition   String   @default("Good")
+  notes       String?
+  acquiredAt  DateTime @default(now())
+  paidPrice   Decimal? @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+  coin        Coin     @relation(fields: [coinId], references: [id])
+  
+  @@unique([userId, coinId, condition], name: "unique_user_coin_condition")
+  @@map("user_collections")
+}
