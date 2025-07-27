@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  coins     Coin[]
+
+  @@map("users")
+}
+
+model Coin {
+  id            String      @id @default(cuid())
+  name          String
+  country       String
+  year          Int
+  denomination  String
+  mintage       BigInt?
+  composition   String?
+  diameter      Float?
+  weight        Float?
+  description   String?
+  condition     Condition   @default(GOOD)
+  purchasePrice Decimal?    @db.Decimal(10, 2)
+  currentValue  Decimal?    @db.Decimal(10, 2)
+  acquired      DateTime?
+  imageUrl      String?
+  notes         String?
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("coins")
+}
+
+enum Condition {
+  POOR
+  FAIR
+  GOOD
+  VERY_GOOD
+  FINE
+  VERY_FINE
+  EXTREMELY_FINE
+  ALMOST_UNCIRCULATED
+  MINT_STATE
+  PROOF
+}
